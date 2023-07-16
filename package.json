@@ -1,0 +1,14 @@
+{
+    "name": "aikatsu",
+    "version": "1.0.0",
+    "main": "index.js",
+    "devDependencies": {
+        "electron": "^25.3.0"
+    },
+    "scripts": {
+        "start": "electron ."
+    },
+    "dependencies": {
+        "pixijs": "^7.1.4"
+    }
+}
