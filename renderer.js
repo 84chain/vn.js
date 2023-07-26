@@ -1,7 +1,7 @@
 const PIXI = require("pixijs")
+const electron = require("electron")
 import { unpack_animations, merge_animations, unpack_angular_animation, unpack_linear_animation, unpack_gravity_animation, unpack_spring_animation } from "./util/animations.js"
 import { TEXT_SPEED, LEFT_TEXT_MARGIN, TOP_TEXT_MARGIN } from "./util/util.js"
-const electron = require("electron")
 
 const app = new PIXI.Application({
     width: window.innerWidth,
