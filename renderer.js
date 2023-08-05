@@ -3,6 +3,11 @@ const electron = require("electron")
 import { unpack_animations, merge_animations, unpack_angular_animation, unpack_linear_animation, unpack_gravity_animation, unpack_spring_animation } from "./util/animations.js"
 import { TEXT_SPEED, LEFT_TEXT_MARGIN, TOP_TEXT_MARGIN } from "./util/util.js"
 
+
+
+// preloading
+const ipcRenderer = electron.ipcRenderer
+
 const app = new PIXI.Application({
     width: window.innerWidth,
     height: window.innerHeight
@@ -12,6 +17,8 @@ const mainContainer = new PIXI.Container()
 
 app.stage.addChild(mainContainer)
 
+
+// data
 const Sequence = {
     scenes: [], // list of scenes
     bgm: {} // bgm src, volume
@@ -69,6 +76,7 @@ const Character = {
 }
 
 
+// functions
 function render_static_scene(scene, frame) {
     const background = new PIXI.Sprite(PIXI.Texture.from(scene.background))
     background.width = app.renderer.width
@@ -122,7 +130,7 @@ function render_static_scene(scene, frame) {
             if (!end && scene.text.start <= frame) {
                 scene.text.animated = false
             } else {
-                return true
+                ipcRenderer.send("asynchronous-message", "next_scene")
             }
         })
         textBoxContainer.addChildAt(textBox, 0)
@@ -233,6 +241,15 @@ function render_sequence(sequence) {
 function render(scene) {
     
 }
+
+
+// ipc communication
+
+ipcRenderer.on("asynchronous-reply", (event, arg) => {
+    console.log("loading " + arg)
+})
+
+ipcRenderer.send('asynchronous-message', "ready")
 
 
 // testing
