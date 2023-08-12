@@ -1,8 +1,8 @@
 const PIXI = require("pixijs")
 const electron = require("electron")
 import { unpack_animations, merge_animations, unpack_angular_animation, unpack_linear_animation, unpack_gravity_animation, unpack_spring_animation } from "./util/animations.js"
-import { TEXT_SPEED, LEFT_TEXT_MARGIN, TOP_TEXT_MARGIN } from "./util/util.js"
-
+import { TEXT_SPEED, LEFT_TEXT_MARGIN, TOP_TEXT_MARGIN, inBoundsCenter } from "./util/util.js"
+import { Game } from "./game.js"
 
 
 // preloading
@@ -208,48 +208,15 @@ function render_game_scene(scene) {
     let bgm = new Audio(scene.bgm.src)
     bgm.volume = scene.bgm.volume
     bgm.play()
-    const background = new PIXI.Sprite(PIXI.Texture.from(scene.background))
-    background.width = app.renderer.width
-    background.height = app.renderer.height
-    background.x = 0
-    background.y = 0
-    background.interactive = false
 
     function render_game_buttons() {
-        for (const btn of scene.buttons) {
-            let buttonContainer = new PIXI.Container()
-            buttonContainer.x = btn.x
-            buttonContainer.y = btn.y
-            buttonContainer.width = btn.width
-            buttonContainer.height = btn.height
-            buttonContainer.anchor.set(0.5)
-            let button = new PIXI.Sprite(PIXI.Texture.from(btn.texture))
-            button.anchor.set(0.5)
-            button.x = 0
-            button.y = 0
-            button.width = btn.width
-            button.height = btn.height
-            let buttonText = new PIXI.Text(btn.text.content, {
-                fontFamiy: btn.text.font,
-                fontSize: btn.text.font_size,
-                fill: btn.text.font_colour,
-                align: "left"
-            })
-            buttonText.anchor.set(0.5)
-            buttonText.x = 0
-            buttonText.y = 0
-            buttonContainer.addChild(button)
-            buttonContainer.addChild(buttonText)
-            buttonContainer.interactive = true
-            buttonContainer.on("pointerup", () => {
-                button.callback
-            })
-        }
+        
     }
     
     function onKeyDown(key) {
+        console.log(key)
         try {
-            button.keybinds[key]
+            scene.keybinds[key.keyCode]
         } catch (e) {
             console.log(e)
         }
@@ -264,35 +231,100 @@ function render_game_scene(scene) {
         const elapsed = timeStamp - start
         if (previous !== timeStamp) {
             const frame = Math.round(elapsed / 16.66666666666667)
-            for (const s of scene.sprites) {
-                let sprite = new PIXI.Sprite(PIXI.Texture.from(s.texture))
-                sprite.x = s.x
-                sprite.y = s.y
-                sprite.width = s.width
-                sprite.height = s.height
-                sprite.anchor.set(0.5)
-                sprite.interactive = false
+            const background = new PIXI.Sprite(PIXI.Texture.from(scene.background))
+            background.width = app.renderer.width
+            background.height = app.renderer.height
+            background.x = 0
+            background.y = 0
+            background.interactive = false
+
+            let spriteContainer = new PIXI.Container()
+            spriteContainer.x = 0
+            spriteContainer.y = 0
+            spriteContainer.width = app.renderer.width
+            spriteContainer.height = app.renderer.height
+            spriteContainer.interactive = false
+            if (scene.sprites) {
+                for (const s of scene.sprites) {
+                    let sprite = new PIXI.Sprite(PIXI.Texture.from(s.texture))
+                    sprite.x = s.x
+                    sprite.y = s.y
+                    sprite.width = s.width
+                    sprite.height = s.height
+                    sprite.anchor.set(0.5)
+                    sprite.interactive = false
+                    spriteContainer.addChild(sprite)
+                }
             }
-            for (const t of scene.text) {
-                let text = new PIXI.Text(t.content, {
-                    fontFamiy: t.font,
-                    fontSize: t.font_size,
-                    fill: t.font_colour,
+
+            let textContainer = new PIXI.Container()
+            textContainer.x = 0
+            textContainer.y = 0
+            textContainer.width = app.renderer.width
+            textContainer.height = app.renderer.height
+            textContainer.interactive = false
+            if (scene.text) {
+                for (const t of scene.text) {
+                    let text = new PIXI.Text(t.content, {
+                        fontFamiy: t.font,
+                        fontSize: t.font_size,
+                        fill: t.font_colour,
+                        align: "left"
+                    })
+                    text.x = t.x
+                    text.y = t.y
+                    text.width = t.width
+                    text.height = t.height
+                    text.anchor.set(0.5)
+                    text.interactive = false
+                    textContainer.addChild(text)
+                }
+            }
+
+            let buttonContainer = new PIXI.Container()
+            buttonContainer.x = 0
+            buttonContainer.y = 0
+            buttonContainer.width = app.renderer.width
+            buttonContainer.height = app.renderer.height
+            buttonContainer.interactive = false
+            for (const btn of scene.buttons) {
+                let button = new PIXI.Sprite(PIXI.Texture.from(btn.texture))
+                button.anchor.set(0.5)
+                button.x = btn.x
+                button.y = btn.y
+                button.width = btn.width
+                button.height = btn.height
+                button.interactive = true
+                button.on("pointerup", (event) => {
+                    if (inBoundsCenter(event.globalX, event.globalY, btn.x, btn.y, btn.width, btn.height)) {
+                        btn["callback"]()
+                    }
+                })
+    
+                let buttonText = new PIXI.Text(btn.text.content, {
+                    fontFamiy: btn.text.font,
+                    fontSize: btn.text.font_size,
+                    fill: btn.text.font_colour,
                     align: "left"
                 })
-                text.x = t.x
-                text.y = t.y
-                text.width = t.width
-                text.height = t.height
-                text.anchor.set(0.5)
-                text.interactive = false
+                buttonText.x = btn.x
+                buttonText.y = btn.y
+    
+                buttonText.interactive = false
+                buttonContainer.addChild(button)
+                buttonContainer.addChild(buttonText)
             }
-            render_game_buttons()
+
+            mainContainer.addChild(background)
+            mainContainer.addChild(spriteContainer)
+            mainContainer.addChild(textContainer)
+            mainContainer.addChild(buttonContainer)
         }
         previous = timeStamp
         window.requestAnimationFrame(step)
     }
     window.requestAnimationFrame(step)
+    document.body.appendChild(app.view)
 }
 
 function render_sequence(sequence) {
@@ -340,10 +372,41 @@ ipcRenderer.on("asynchronous-reply", (event, arg) => {
     console.log("loading " + arg)
 })
 
-ipcRenderer.send('asynchronous-message', "ready")
+//ipcRenderer.send('asynchronous-message', "ready")
 
 
 // testing
+
+const g = new Game()
+g.background = "./assets/images/bg.jpg"
+g.bgm = {
+    src: "./assets/sounds/amongus.mp3",
+    volume: 1
+}
+g.add_button({
+        texture: "./assets/images/amongus.png",
+        x: 100,
+        y: 100,
+        width: 50,
+        height: 100,
+        text: {
+            content: "button 1",
+            font: "Times New Roman", //string
+            font_colour: "000000", // hex
+            font_size: 15, // int,
+        },
+        callback: () => {
+            g.background = "./assets/images/amongus.png"
+        }
+    }
+)
+g.add_keybind({
+    key: 38,
+    callback: () => {
+        g.buttons[0].y -= 1
+    }
+})
+render_game_scene(g)
 
 // const s = {
 //     type: "static", // enum(static, dynamic)

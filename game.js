@@ -1,15 +1,14 @@
-class Game {
-    constructor(app) {
-        this.app = app
+export class Game {
+    constructor() {
         this.buttons = []
         this.keybinds = {}
     }
 
-    set add_button(button) {
+    add_button(button) {
         this.buttons.push(button)
     }
 
-    set add_keybind(keybind) {
-        this.keybinds.push(keybind)
+    add_keybind(keybind) {
+        this.keybinds[keybind.key] = keybind.callback
     }
 }
