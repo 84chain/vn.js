@@ -201,7 +201,98 @@ function render_media_scene(media) {
 }
 
 function render_game_scene(scene) {
+    if (scene.background === undefined || scene.bgm === undefined) {
+        console.log("invalid Game")
+        return
+    }
+    let bgm = new Audio(scene.bgm.src)
+    bgm.volume = scene.bgm.volume
+    bgm.play()
+    const background = new PIXI.Sprite(PIXI.Texture.from(scene.background))
+    background.width = app.renderer.width
+    background.height = app.renderer.height
+    background.x = 0
+    background.y = 0
+    background.interactive = false
 
+    function render_game_buttons() {
+        for (const btn of scene.buttons) {
+            let buttonContainer = new PIXI.Container()
+            buttonContainer.x = btn.x
+            buttonContainer.y = btn.y
+            buttonContainer.width = btn.width
+            buttonContainer.height = btn.height
+            buttonContainer.anchor.set(0.5)
+            let button = new PIXI.Sprite(PIXI.Texture.from(btn.texture))
+            button.anchor.set(0.5)
+            button.x = 0
+            button.y = 0
+            button.width = btn.width
+            button.height = btn.height
+            let buttonText = new PIXI.Text(btn.text.content, {
+                fontFamiy: btn.text.font,
+                fontSize: btn.text.font_size,
+                fill: btn.text.font_colour,
+                align: "left"
+            })
+            buttonText.anchor.set(0.5)
+            buttonText.x = 0
+            buttonText.y = 0
+            buttonContainer.addChild(button)
+            buttonContainer.addChild(buttonText)
+            buttonContainer.interactive = true
+            buttonContainer.on("pointerup", () => {
+                button.callback
+            })
+        }
+    }
+    
+    function onKeyDown(key) {
+        try {
+            button.keybinds[key]
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    document.addEventListener("keydown", onKeyDown)
+
+    let start, previous
+    function step(timeStamp) {
+        if (start === undefined) start = timeStamp
+
+        const elapsed = timeStamp - start
+        if (previous !== timeStamp) {
+            const frame = Math.round(elapsed / 16.66666666666667)
+            for (const s of scene.sprites) {
+                let sprite = new PIXI.Sprite(PIXI.Texture.from(s.texture))
+                sprite.x = s.x
+                sprite.y = s.y
+                sprite.width = s.width
+                sprite.height = s.height
+                sprite.anchor.set(0.5)
+                sprite.interactive = false
+            }
+            for (const t of scene.text) {
+                let text = new PIXI.Text(t.content, {
+                    fontFamiy: t.font,
+                    fontSize: t.font_size,
+                    fill: t.font_colour,
+                    align: "left"
+                })
+                text.x = t.x
+                text.y = t.y
+                text.width = t.width
+                text.height = t.height
+                text.anchor.set(0.5)
+                text.interactive = false
+            }
+            render_game_buttons()
+        }
+        previous = timeStamp
+        window.requestAnimationFrame(step)
+    }
+    window.requestAnimationFrame(step)
 }
 
 function render_sequence(sequence) {
