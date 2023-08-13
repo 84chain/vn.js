@@ -377,37 +377,37 @@ ipcRenderer.on("asynchronous-reply", (event, arg) => {
 
 // testing
 
-// const g = new Game()
-// g.background = "./assets/images/bg.jpg"
-// g.bgm = {
-//     src: "./assets/sounds/amongus.mp3",
-//     volume: 1
-// }
-// g.add_button({
-//         texture: "./assets/images/amongus.png",
-//         x: 100,
-//         y: 100,
-//         width: 50,
-//         height: 100,
-//         text: {
-//             content: "button 1",
-//             font: "Times New Roman", //string
-//             font_colour: "000000", // hex
-//             font_size: 15, // int,
-//         },
-//         callback: () => {
-//             g.buttons[0].x = 200
-//         }
-//     }
-// )
-// g.add_keybind({
-//     key: 38,
-//     callback: () => {
-//         console.log("up pressed")
-//         g.buttons[0].y -= 1
-//     }
-// })
-// render_game_scene(g)
+const g = {
+    buttons: [],
+    keybinds: {}
+}
+g.background = "./assets/images/bg.jpg"
+g.bgm = {
+    src: "./assets/sounds/amongus.mp3",
+    volume: 1
+}
+g.buttons.push({
+        texture: "./assets/images/amongus.png",
+        x: 100,
+        y: 100,
+        width: 50,
+        height: 100,
+        text: {
+            content: "button 1",
+            font: "Times New Roman", //string
+            font_colour: "000000", // hex
+            font_size: 15, // int,
+        },
+        callback: () => {
+            g.buttons[0].x = 200
+        }
+    }
+)
+g.keybinds[38] = () => {
+    console.log("up pressed")
+    g.buttons[0].y -= 1
+}
+render_game_scene(g)
 
 // const s = {
 //     type: "static", // enum(static, dynamic)
