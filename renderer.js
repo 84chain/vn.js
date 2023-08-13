@@ -208,15 +208,10 @@ function render_game_scene(scene) {
     let bgm = new Audio(scene.bgm.src)
     bgm.volume = scene.bgm.volume
     bgm.play()
-
-    function render_game_buttons() {
-        
-    }
     
     function onKeyDown(key) {
-        console.log(key)
         try {
-            scene.keybinds[key.keyCode]
+            scene.keybinds[key.keyCode.toString()]()
         } catch (e) {
             console.log(e)
         }
@@ -231,56 +226,8 @@ function render_game_scene(scene) {
         const elapsed = timeStamp - start
         if (previous !== timeStamp) {
             const frame = Math.round(elapsed / 16.66666666666667)
-            const background = new PIXI.Sprite(PIXI.Texture.from(scene.background))
-            background.width = app.renderer.width
-            background.height = app.renderer.height
-            background.x = 0
-            background.y = 0
-            background.interactive = false
 
-            let spriteContainer = new PIXI.Container()
-            spriteContainer.x = 0
-            spriteContainer.y = 0
-            spriteContainer.width = app.renderer.width
-            spriteContainer.height = app.renderer.height
-            spriteContainer.interactive = false
-            if (scene.sprites) {
-                for (const s of scene.sprites) {
-                    let sprite = new PIXI.Sprite(PIXI.Texture.from(s.texture))
-                    sprite.x = s.x
-                    sprite.y = s.y
-                    sprite.width = s.width
-                    sprite.height = s.height
-                    sprite.anchor.set(0.5)
-                    sprite.interactive = false
-                    spriteContainer.addChild(sprite)
-                }
-            }
-
-            let textContainer = new PIXI.Container()
-            textContainer.x = 0
-            textContainer.y = 0
-            textContainer.width = app.renderer.width
-            textContainer.height = app.renderer.height
-            textContainer.interactive = false
-            if (scene.text) {
-                for (const t of scene.text) {
-                    let text = new PIXI.Text(t.content, {
-                        fontFamiy: t.font,
-                        fontSize: t.font_size,
-                        fill: t.font_colour,
-                        align: "left"
-                    })
-                    text.x = t.x
-                    text.y = t.y
-                    text.width = t.width
-                    text.height = t.height
-                    text.anchor.set(0.5)
-                    text.interactive = false
-                    textContainer.addChild(text)
-                }
-            }
-
+            // buttons
             let buttonContainer = new PIXI.Container()
             buttonContainer.x = 0
             buttonContainer.y = 0
@@ -313,6 +260,59 @@ function render_game_scene(scene) {
                 buttonText.interactive = false
                 buttonContainer.addChild(button)
                 buttonContainer.addChild(buttonText)
+            }
+
+            // background
+            const background = new PIXI.Sprite(PIXI.Texture.from(scene.background))
+            background.width = app.renderer.width
+            background.height = app.renderer.height
+            background.x = 0
+            background.y = 0
+            background.interactive = false
+
+            // sprites
+            let spriteContainer = new PIXI.Container()
+            spriteContainer.x = 0
+            spriteContainer.y = 0
+            spriteContainer.width = app.renderer.width
+            spriteContainer.height = app.renderer.height
+            spriteContainer.interactive = false
+            if (scene.sprites) {
+                for (const s of scene.sprites) {
+                    let sprite = new PIXI.Sprite(PIXI.Texture.from(s.texture))
+                    sprite.x = s.x
+                    sprite.y = s.y
+                    sprite.width = s.width
+                    sprite.height = s.height
+                    sprite.anchor.set(0.5)
+                    sprite.interactive = false
+                    spriteContainer.addChild(sprite)
+                }
+            }
+
+            // text
+            let textContainer = new PIXI.Container()
+            textContainer.x = 0
+            textContainer.y = 0
+            textContainer.width = app.renderer.width
+            textContainer.height = app.renderer.height
+            textContainer.interactive = false
+            if (scene.text) {
+                for (const t of scene.text) {
+                    let text = new PIXI.Text(t.content, {
+                        fontFamiy: t.font,
+                        fontSize: t.font_size,
+                        fill: t.font_colour,
+                        align: "left"
+                    })
+                    text.x = t.x
+                    text.y = t.y
+                    text.width = t.width
+                    text.height = t.height
+                    text.anchor.set(0.5)
+                    text.interactive = false
+                    textContainer.addChild(text)
+                }
             }
 
             mainContainer.addChild(background)
@@ -377,36 +377,37 @@ ipcRenderer.on("asynchronous-reply", (event, arg) => {
 
 // testing
 
-const g = new Game()
-g.background = "./assets/images/bg.jpg"
-g.bgm = {
-    src: "./assets/sounds/amongus.mp3",
-    volume: 1
-}
-g.add_button({
-        texture: "./assets/images/amongus.png",
-        x: 100,
-        y: 100,
-        width: 50,
-        height: 100,
-        text: {
-            content: "button 1",
-            font: "Times New Roman", //string
-            font_colour: "000000", // hex
-            font_size: 15, // int,
-        },
-        callback: () => {
-            g.background = "./assets/images/amongus.png"
-        }
-    }
-)
-g.add_keybind({
-    key: 38,
-    callback: () => {
-        g.buttons[0].y -= 1
-    }
-})
-render_game_scene(g)
+// const g = new Game()
+// g.background = "./assets/images/bg.jpg"
+// g.bgm = {
+//     src: "./assets/sounds/amongus.mp3",
+//     volume: 1
+// }
+// g.add_button({
+//         texture: "./assets/images/amongus.png",
+//         x: 100,
+//         y: 100,
+//         width: 50,
+//         height: 100,
+//         text: {
+//             content: "button 1",
+//             font: "Times New Roman", //string
+//             font_colour: "000000", // hex
+//             font_size: 15, // int,
+//         },
+//         callback: () => {
+//             g.buttons[0].x = 200
+//         }
+//     }
+// )
+// g.add_keybind({
+//     key: 38,
+//     callback: () => {
+//         console.log("up pressed")
+//         g.buttons[0].y -= 1
+//     }
+// })
+// render_game_scene(g)
 
 // const s = {
 //     type: "static", // enum(static, dynamic)
