@@ -2,7 +2,6 @@ const PIXI = require("pixijs")
 const electron = require("electron")
 import { unpack_animations, merge_animations, unpack_angular_animation, unpack_linear_animation, unpack_gravity_animation, unpack_spring_animation } from "./util/animations.js"
 import { TEXT_SPEED, LEFT_TEXT_MARGIN, TOP_TEXT_MARGIN, inBoundsCenter } from "./util/util.js"
-import { Game } from "./game.js"
 
 
 // preloading
@@ -372,42 +371,42 @@ ipcRenderer.on("asynchronous-reply", (event, arg) => {
     console.log("loading " + arg)
 })
 
-//ipcRenderer.send('asynchronous-message', "ready")
+ipcRenderer.send('ready')
 
 
 // testing
 
-const g = {
-    buttons: [],
-    keybinds: {}
-}
-g.background = "./assets/images/bg.jpg"
-g.bgm = {
-    src: "./assets/sounds/amongus.mp3",
-    volume: 1
-}
-g.buttons.push({
-        texture: "./assets/images/amongus.png",
-        x: 100,
-        y: 100,
-        width: 50,
-        height: 100,
-        text: {
-            content: "button 1",
-            font: "Times New Roman", //string
-            font_colour: "000000", // hex
-            font_size: 15, // int,
-        },
-        callback: () => {
-            g.buttons[0].x = 200
-        }
-    }
-)
-g.keybinds[38] = () => {
-    console.log("up pressed")
-    g.buttons[0].y -= 1
-}
-render_game_scene(g)
+// const g = {
+//     buttons: [],
+//     keybinds: {}
+// }
+// g.background = "./assets/images/bg.jpg"
+// g.bgm = {
+//     src: "./assets/sounds/amongus.mp3",
+//     volume: 1
+// }
+// g.buttons.push({
+//         texture: "./assets/images/amongus.png",
+//         x: 100,
+//         y: 100,
+//         width: 50,
+//         height: 100,
+//         text: {
+//             content: "button 1",
+//             font: "Times New Roman", //string
+//             font_colour: "000000", // hex
+//             font_size: 15, // int,
+//         },
+//         callback: () => {
+//             g.buttons[0].x = 200
+//         }
+//     }
+// )
+// g.keybinds[38] = () => {
+//     console.log("up pressed")
+//     g.buttons[0].y -= 1
+// }
+// render_game_scene(g)
 
 // const s = {
 //     type: "static", // enum(static, dynamic)

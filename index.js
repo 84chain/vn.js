@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
+const fs = require("fs")
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 
@@ -13,25 +14,20 @@ const createWindow = () => {
     })
     win.loadFile('index.html')
 }
+ 
+ipcMain.on("ready", (event) => {
+    console.log("renderer is ready")
+    event.sender.send("ready")
+})
 
-ipcMain.on('asynchronous-message', (event, arg) => {
-    switch (arg) {
-        case "ready":
-            console.log("renderer is ready, sending saved scene")
-            break
-    }
+ipcMain.on("save", (event, arg) => {
+    fs.writeFile("savefile.txt", arg, (err) => {
+        if (err) throw err
+        console.log("Saved successfully")
+    })
+    
+})
  
-    // Event emitter for sending asynchronous messages
-    event.sender.send('asynchronous-reply', 'saved scene')
- })
- 
- // Event handler for synchronous incoming messages
- ipcMain.on('synchronous-message', (event, arg) => {
-    console.log(arg) 
- 
-    // Synchronous event emmision
-    event.returnValue = 'sync pong'
- })
 
 app.whenReady().then(() => {
     createWindow()
