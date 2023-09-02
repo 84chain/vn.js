@@ -29,6 +29,7 @@ const Sequence = {
 }
 
 const staticScene = {
+    id: 0, // number
     type: "static",
 
     background: "",  // image src
@@ -42,7 +43,7 @@ const staticScene = {
         duration: 0,
         animated: true,
         visible: true, // yes/no
-        text_box_colour: "", // hex
+        text_box_image: "", // path
         font: "", //string
         font_colour: "", // hex
         font_size: 0, // int,
@@ -54,6 +55,7 @@ const staticScene = {
 }
 
 const mediaScene = {
+    id: 0,
     type: "media",
     media: {
         type: "",
@@ -63,8 +65,9 @@ const mediaScene = {
 }
 
 const gameScene = {
+    id: 0,
     type: "game",
-    game: {} // Game class probably
+    game: {} // object
 }
 
 const Character = {
@@ -110,7 +113,7 @@ function render_static_scene(scene, frame) {
     textBoxContainer.height = app.renderer.height / 5
     
     if (scene.text.visible) {
-        const textBox = new PIXI.Sprite(scene.text.text_box_colour)
+        const textBox = new PIXI.Sprite(scene.text.text_box_image)
         textBox.x = 0
         textBox.y = 0
         textBox.width = app.renderer.width
@@ -147,7 +150,7 @@ function render_static_scene(scene, frame) {
             if (!end && scene.text.start <= frame) {
                 scene.text.animated = false
             } else {
-                ipcRenderer.send("asynchronous-message", "next_scene")
+                ipcRenderer.send("next-scene", scene.id)
             }
         })
         textBoxContainer.addChildAt(textBox, 0)
@@ -393,77 +396,7 @@ ipcRenderer.on("settings-saved", (event) => {
     loadSettings()
 })
 
-
-// testing
-
-// const g = {
-//     buttons: [],
-//     keybinds: {}
-// }
-// g.background = "./assets/images/bg.jpg"
-// g.bgm = {
-//     src: "./assets/sounds/amongus.mp3",
-//     volume: 1
-// }
-// g.buttons.push({
-//         texture: "./assets/images/amongus.png",
-//         x: 100,
-//         y: 100,
-//         width: 50,
-//         height: 100,
-//         text: {
-//             content: "button 1",
-//             font: "Times New Roman", //string
-//             font_colour: "000000", // hex
-//             font_size: 15, // int,
-//         },
-//         callback: () => {
-//             g.buttons[0].x = 200
-//         }
-//     }
-// )
-// g.keybinds[38] = () => {
-//     console.log("up pressed")
-//     g.buttons[0].y -= 1
-// }
-// render_game_scene(g)
-
-// const s = {
-//     type: "static", // enum(static, dynamic)
-
-//     background: "./assets/images/bg.jpg",  // image src
-//     characters: [], // Array<Character>
-//     animations: [], // Array<Animation>
-//     sounds: [
-//         {
-//             src: "./assets/sounds/sus.mp3",
-//             start: 60,
-//             volume: 1
-//         }
-//     ], // {src, start, volume}
-
-//     text: {
-//         content: "fuck me in the ass", // string
-//         start: 60,
-//         duration: undefined,
-//         animated: true,
-//         visible: true, // yes/no
-//         text_box_colour: PIXI.Texture.WHITE, // hex
-//         font: "Times New Roman", //string
-//         font_colour: "000000", // hex
-//         font_size: 15, // int,
-//         type_sound: {
-//             src: "./assets/sounds/press.wav",
-//             volume: 0.5
-//         }
-//     }
-// }
-
-// render_sequence(
-//     {
-//         bgm: {src: "./assets/sounds/sus.mp3",
-//         start: 0,
-//         volume: 1},
-//         scenes: [s]
-//     }
-// )
+ipcRenderer.on("next-scene", (event, scene_id) => {
+    // get next scene from game files by id
+    // render scene
+})

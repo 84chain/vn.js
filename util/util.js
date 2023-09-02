@@ -1,6 +1,8 @@
 // true constants - unchangeable by settings
 export const LEFT_TEXT_MARGIN = 10
 export const TOP_TEXT_MARGIN = 10
+export const WINDOW_WIDTH = 800
+export const WINDOW_HEIGHT = 600
 
 export function inBounds(x, y, bounds) {
     if (Math.abs(bounds.x2 - x) > Math.abs(bounds.x2 - bounds.x1)) return false

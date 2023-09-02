@@ -1,7 +1,7 @@
 {
-    "TEXT_SPEED": 5,
-    "FONT_SIZE": 10,
-    "MUSIC_VOLUME": 1,
-    "VOICE_VOLUME": 1,
-    "SFX_VOLUME": 1
+    "TEXT_SPEED": 0,
+    "FONT_SIZE": 0,
+    "MUSIC_VOLUME": 0,
+    "VOICE_VOLUME": 0,
+    "SFX_VOLUME": 0
 }
