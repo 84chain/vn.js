@@ -22,67 +22,6 @@ let TEXT_SPEED, FONT_SIZE, MUSIC_VOLUME, VOICE_VOLUME, SFX_VOLUME
 loadSettings()
 
 
-// data
-const Sequence = {
-    scenes: [], // list of scenes
-    bgm: {} // bgm src, volume
-}
-
-const staticScene = {
-    id: 0, // number
-    type: "static",
-
-    background: "",  // image src
-    characters: [], // Array<Character>
-    animations: [], // Array<Animation>
-    sounds: [], // {src, start, volume}
-
-    text: {
-        content: null, // string
-        start: 0,
-        duration: 0,
-        animated: true,
-        visible: true, // yes/no
-        text_box_image: "", // path
-        font: "", //string
-        font_colour: "", // hex
-        font_size: 0, // int,
-        type_sound: {
-            src: "",
-            volume: 0
-        }
-    }
-}
-
-const mediaScene = {
-    id: 0,
-    type: "media",
-    media: {
-        type: "",
-        src: "",
-        volume: 0
-    }
-}
-
-const gameScene = {
-    id: 0,
-    type: "game",
-    game: {} // object
-}
-
-const Character = {
-    name: null, // string
-    image: null, // string
-    start: 0,
-    duration: 0,
-    width: null, // int
-    height: null, //height
-    x: null, // int
-    y: null, // int
-    animations: []
-}
-
-
 // helpers
 function loadSettings() {
     fs.readFile("settings.txt", "utf8", (err, data) => {
@@ -94,6 +33,10 @@ function loadSettings() {
         VOICE_VOLUME = settings.VOICE_VOLUME
         SFX_VOLUME = settings.SFX_VOLUME
     })
+}
+
+function loadFile() {
+    
 }
 
 // rendering
