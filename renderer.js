@@ -1,7 +1,7 @@
 const PIXI = require("pixijs")
 const electron = require("electron")
 import { unpack_animations, merge_animations, unpack_angular_animation, unpack_linear_animation, unpack_gravity_animation, unpack_spring_animation } from "./util/animations.js"
-import { TEXT_SPEED, LEFT_TEXT_MARGIN, TOP_TEXT_MARGIN, inBoundsCenter } from "./util/util.js"
+import { LEFT_TEXT_MARGIN, TOP_TEXT_MARGIN, inBoundsCenter } from "./util/util.js"
 
 
 // preloading
@@ -15,6 +15,11 @@ const app = new PIXI.Application({
 const mainContainer = new PIXI.Container()
 
 app.stage.addChild(mainContainer)
+
+// settings-controlled constants
+let TEXT_SPEED, FONT_SIZE, MUSIC_VOLUME, VOICE_VOLUME, SFX_VOLUME
+
+loadSettings()
 
 
 // data
@@ -75,7 +80,20 @@ const Character = {
 }
 
 
-// functions
+// helpers
+function loadSettings() {
+    fs.readFile("settings.txt", "utf8", (err, data) => {
+        if (err) throw err
+        const settings = JSON.parse(data)
+        TEXT_SPEED = settings.TEXT_SPEED
+        FONT_SIZE = settings.FONT_SIZE
+        MUSIC_VOLUME = settings.MUSIC_VOLUME
+        VOICE_VOLUME = settings.VOICE_VOLUME
+        SFX_VOLUME = settings.SFX_VOLUME
+    })
+}
+
+// rendering
 function render_static_scene(scene, frame) {
     const background = new PIXI.Sprite(PIXI.Texture.from(scene.background))
     background.width = app.renderer.width
@@ -366,12 +384,14 @@ function render(scene) {
 
 
 // ipc communication
-
-ipcRenderer.on("asynchronous-reply", (event, arg) => {
-    console.log("loading " + arg)
+ipcRenderer.on("ready", (event) => {
+    // render
 })
 
-ipcRenderer.send('ready')
+ipcRenderer.on("settings-saved", (event) => {
+    // reload settings
+    loadSettings()
+})
 
 
 // testing

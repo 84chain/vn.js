@@ -1,4 +1,4 @@
-export const TEXT_SPEED = 6
+// true constants - unchangeable by settings
 export const LEFT_TEXT_MARGIN = 10
 export const TOP_TEXT_MARGIN = 10
 

@@ -14,7 +14,8 @@ const createWindow = () => {
     })
     win.loadFile('index.html')
 }
- 
+
+
 ipcMain.on("ready", (event) => {
     console.log("renderer is ready")
     event.sender.send("ready")
@@ -23,9 +24,16 @@ ipcMain.on("ready", (event) => {
 ipcMain.on("save", (event, arg) => {
     fs.writeFile("savefile.txt", arg, (err) => {
         if (err) throw err
-        console.log("Saved successfully")
+        event.sender.send("saved")
     })
     
+})
+
+ipcMain.on("save-settings", (event, arg) => {
+    fs.writeFile("settings.txt", arg,  (err) => {
+        if (err) throw err
+        event.sender.send("settings-saved")
+    })
 })
  
 
